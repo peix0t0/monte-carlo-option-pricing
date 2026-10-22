@@ -12,6 +12,7 @@ Monte Carlo pricing of European options, validated against the Black-Scholes ana
 - Measures the Euler-Maruyama discretization error, separately from statistical noise
 - Applies antithetic variates as a variance reduction technique
 - Automated tests with pytest
+- Prices an arithmetic-average Asian call, which has no closed-form solution
 
 ## Results
 
@@ -86,6 +87,17 @@ python -m pytest
 
 The commands above are for Windows. On Linux or macOS, activate the environment with `source .venv/bin/activate`.
 
+
+### Call asiática (sem fórmula fechada)
+
+Uma call asiática de média aritmética paga max(preço médio ao longo do ano - K, 0). Não existe preço fechado simples, então o Monte Carlo é necessário. Com 200.000 trajetórias e 252 passos diários:
+
+| Opção | Preço | Erro padrão |
+|---|---|---|
+| Call europeia (Black-Scholes) | 10,4506 | - |
+| Call asiática (Monte Carlo) | 5,7680 | 0,0179 |
+
+O preço da asiática é cerca de 55% do da europeia, como esperado: a média suaviza a trajetória e reduz a chance de um ganho grande. Este resultado não foi validado contra um valor exato; uma verificação natural seria a asiática de média geométrica, que tem preço fechado.
 ## Structure
 
 ```

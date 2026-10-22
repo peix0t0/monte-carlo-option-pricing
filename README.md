@@ -12,6 +12,7 @@ Monte Carlo pricing of European options, validated against the Black-Scholes ana
 - Measures the Euler-Maruyama discretization error, separately from statistical noise
 - Applies antithetic variates as a variance reduction technique
 - Automated tests with pytest
+- Prices an arithmetic-average Asian call, which has no closed-form solution
 
 ## Results
 
@@ -85,6 +86,35 @@ python -m pytest
 ```
 
 The commands above are for Windows. On Linux or macOS, activate the environment with `source .venv/bin/activate`.
+
+### Asian call option (no closed form)
+
+An arithmetic-average Asian call pays max(average price over the year - K, 0). There is no simple closed-form price, so Monte Carlo is needed. Using 200,000 paths with 252 daily steps:
+
+| Option | Price | Standard error |
+|---|---|---|
+| European call (Black-Scholes) | 10.4506 | - |
+| Asian call (Monte Carlo) | 5.7680 | 0.0179 |
+
+### Asian call option (no closed form)
+
+An arithmetic-average Asian call pays max(average price over the year - K, 0). There is no simple closed-form price, so Monte Carlo is needed. Using 200,000 paths with 252 daily steps:
+
+| Option | Price | Standard error |
+|---|---|---|
+| European call (Black-Scholes) | 10.4506 | - |
+| Asian call (Monte Carlo) | 5.7680 | 0.0179 |
+
+### Asian call option (no closed form)
+
+An arithmetic-average Asian call pays max(average price over the year - K, 0). There is no simple closed-form price, so Monte Carlo is needed. Using 200,000 paths with 252 daily steps:
+
+| Option | Price | Standard error |
+|---|---|---|
+| European call (Black-Scholes) | 10.4506 | - |
+| Asian call (Monte Carlo) | 5.7680 | 0.0179 |
+
+The Asian price is about 55% of the European one, as expected: averaging smooths the path and reduces the chance of a large payoff. This result is not validated against an exact value; a natural check would be the geometric-average Asian option, which has a closed-form price.
 
 ## Structure
 
