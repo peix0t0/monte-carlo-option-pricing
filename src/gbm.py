@@ -22,3 +22,14 @@ def simulate_gbm_paths(S0, r, sigma, T, n_steps, n_paths, seed=None):
     # Adiciona o preço inicial na coluna 0
     start = np.full((n_paths, 1), S0)
     return np.hstack([start, paths])
+
+
+def simulate_gbm_terminal_euler(S0, r, sigma, T, n_steps, n_paths, seed=None):
+    """Preço final S_T pelo esquema de Euler-Maruyama (n_steps passos)."""
+    rng = np.random.default_rng(seed)
+    dt = T / n_steps
+    S = np.full(n_paths, float(S0))
+    for _ in range(n_steps):
+        Z = rng.standard_normal(n_paths)
+        S = S + r * S * dt + sigma * S * np.sqrt(dt) * Z
+    return S
