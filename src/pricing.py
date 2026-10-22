@@ -37,3 +37,28 @@ def bs_call_price(S0, K, r, sigma, T):
     d1 = (np.log(S0 / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
     d2 = d1 - sigma * np.sqrt(T)
     return S0 * norm_cdf(d1) - K * np.exp(-r * T) * norm_cdf(d2)
+
+
+def mc_call_price_antithetic(S0, K, r, sigma, T, n_sims, seed=None):
+    """Call europeia por Monte Carlo com variáveis antitéticas.
+
+    Usa n_sims // 2 pares (Z, -Z). Retorna (preço estimado, erro padrão).
+    """
+    rng = np.random.default_rng(seed)
+    n_pairs = n_sims // 2
+    Z = rng.standard_normal(n_pairs)
+
+    drift = (r - 0.5 * sigma**2) * T
+    vol = sigma * np.sqrt(T)
+    S_plus = S0 * np.exp(drift + vol * Z)
+    S_minus = S0 * np.exp(drift - vol * Z)
+
+    payoff_plus = np.maximum(S_plus - K, 0.0)
+    payoff_minus = np.maximum(S_minus - K, 0.0)
+
+    # Cada par vira UMA observação: a média dos dois ganhos
+    pair_avg = np.exp(-r * T) * 0.5 * (payoff_plus + payoff_minus)
+
+    price = pair_avg.mean()
+    std_error = pair_avg.std(ddof=1) / np.sqrt(n_pairs)
+    return price, std_error
